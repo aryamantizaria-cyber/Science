@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Science Notes</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #13161e;
+    --surface2: #1a1e2a;
+    --border: rgba(255,255,255,0.07);
+    --border-strong: rgba(255,255,255,0.14);
+    --text: #e8eaf0;
+    --muted: #7a7f94;
+    --dim: #4a4f63;
+
+    --blue: #4a9eff;
+    --blue-bg: rgba(74,158,255,0.1);
+    --blue-border: rgba(74,158,255,0.25);
+
+    --teal: #2dd4a0;
+    --teal-bg: rgba(45,212,160,0.1);
+    --teal-border: rgba(45,212,160,0.25);
+
+    --amber: #f5a623;
+    --amber-bg: rgba(245,166,35,0.1);
+    --amber-border: rgba(245,166,35,0.25);
+
+    --red: #ff6b6b;
+    --red-bg: rgba(255,107,107,0.1);
+    --red-border: rgba(255,107,107,0.25);
+
+    --purple: #a78bfa;
+    --purple-bg: rgba(167,139,250,0.1);
+    --purple-border: rgba(167,139,250,0.25);
+
+    --green: #6ee7a0;
+    --green-bg: rgba(110,231,160,0.1);
+    --green-border: rgba(110,231,160,0.25);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.75;
+    min-height: 100vh;
+  }
+
+  /* Header */
+  .site-header {
+    padding: 3rem 2rem 2rem;
+    max-width: 900px;
+    margin: 0 auto;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2rem;
+  }
+  .site-header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.8rem;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    margin-bottom: 0.4rem;
+  }
+  .site-header p {
+    color: var(--muted);
+    font-size: 0.9rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  /* Layout */
+  .container { max-width: 900px; margin: 0 auto; padding: 0 2rem 4rem; }
+
+  /* Subject tabs */
+  .subject-nav {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 2rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 4px;
+  }
+  .stab {
+    flex: 1;
+    padding: 10px 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    color: var(--muted);
+    background: none;
+    border: none;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .stab.active { background: var(--surface2); color: var(--text); }
+  .stab:hover:not(.active) { color: var(--text); }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* Subtopic pills */
+  .pill-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 1.5rem;
+  }
+  .pill {
+    padding: 5px 14px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    color: var(--muted);
+    background: none;
+    border: 1px solid var(--border-strong);
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+  }
+  .pill.active { color: var(--text); border-color: var(--text); background: rgba(255,255,255,0.05); }
+  .pill:hover:not(.active) { color: var(--text); border-color: var(--border-strong); }
+
+  .subpanel { display: none; }
+  .subpanel.active { display: block; }
+
+  /* Cards */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.5rem;
+    margin-bottom: 12px;
+  }
+  .card-blue { border-left: 3px solid var(--blue); }
+  .card-teal { border-left: 3px solid var(--teal); }
+  .card-purple { border-left: 3px solid var(--purple); }
+  .card-amber { border-left: 3px solid var(--amber); }
+  .card-red { border-left: 3px solid var(--red); }
+  .card-green { border-left: 3px solid var(--green); }
+
+  h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.15rem;
+    font-weight: 400;
+    color: var(--text);
+    margin-bottom: 10px;
+    letter-spacing: -0.01em;
+  }
+  h4 {
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 16px 0 7px;
+  }
+  p { font-size: 0.9rem; color: var(--text); }
+  ul, ol { padding-left: 16px; }
+  li { font-size: 0.9rem; color: var(--text); margin-bottom: 4px; }
+  strong { font-weight: 500; color: var(--text); }
+
+  /* Formula */
+  .formula {
+    display: inline-block;
+    background: var(--surface2);
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    padding: 7px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--teal);
+    margin: 8px 0;
+  }
+
+  /* Callout */
+  .note {
+    background: var(--blue-bg);
+    border: 1px solid var(--blue-border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.85rem;
+    color: var(--blue);
+    margin: 10px 0;
+    line-height: 1.6;
+  }
+
+  /* Badge tags */
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    margin-right: 5px;
+    margin-bottom: 6px;
+  }
+  .t-blue { background: var(--blue-bg); color: var(--blue); border: 1px solid var(--blue-border); }
+  .t-teal { background: var(--teal-bg); color: var(--teal); border: 1px solid var(--teal-border); }
+  .t-amber { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
+  .t-red { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+  .t-purple { background: var(--purple-bg); color: var(--purple); border: 1px solid var(--purple-border); }
+  .t-green { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+
+  /* Grid */
+  .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+  .mini {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+  }
+
+  /* Table */
+  table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 8px; }
+  th {
+    text-align: left;
+    padding: 9px 12px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border-strong);
+  }
+  td { padding: 9px 12px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* Section divider */
+  .divider { height: 1px; background: var(--border); margin: 16px 0; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <h1>Science Notes</h1>
+  <p>Physics &nbsp;·&nbsp; Chemistry &nbsp;·&nbsp; Biology</p>
+</header>
+
+<div class="container">
+
+  <div class="subject-nav">
+    <button class="stab active" onclick="switchTab('physics',this)">Physics</button>
+    <button class="stab" onclick="switchTab('chemistry',this)">Chemistry</button>
+    <button class="stab" onclick="switchTab('biology',this)">Biology</button>
+  </div>
+
+  <!-- ===================== PHYSICS ===================== -->
+  <div id="physics" class="panel active">
+    <div class="pill-row">
+      <button class="pill active" onclick="switchSub('physics','forces',this)">Forces</button>
+      <button class="pill" onclick="switchSub('physics','friction',this)">Friction</button>
+      <button class="pill" onclick="switchSub('physics','gravity',this)">Gravity & weight</button>
+      <button class="pill" onclick="switchSub('physics','balanced',this)">Balanced forces</button>
+      <button class="pill" onclick="switchSub('physics','freefall',this)">Free fall</button>
+      <button class="pill" onclick="switchSub('physics','magnets',this)">Magnets</button>
+      <button class="pill" onclick="switchSub('physics','em',this)">Electromagnets</button>
+      <button class="pill" onclick="switchSub('physics','nuclear',this)">Nuclear</button>
+      <button class="pill" onclick="switchSub('physics','satellites',this)">Satellites</button>
+      <button class="pill" onclick="switchSub('physics','bigbang',this)">Big bang</button>
+      <button class="pill" onclick="switchSub('physics','electrostatic',this)">Electrostatic</button>
+    </div>
+
+    <div id="physics-forces" class="subpanel active">
+      <div class="card card-blue">
+        <h3>What is a force?</h3>
+        <div class="formula">F = m × a</div>
+        <p style="margin:10px 0 14px">A force is a push or pull acting on an object. Two types exist: contact and non-contact.</p>
+        <h4>Contact forces</h4>
+        <ul style="margin-top:6px">
+          <li><strong>Friction</strong> — opposes motion when two surfaces rub</li>
+          <li><strong>Tension</strong> — when an object is pulled from opposite ends</li>
+          <li><strong>Normal contact force</strong> — when an object is supported by a surface</li>
+        </ul>
+        <h4>Non-contact forces</h4>
+        <ul style="margin-top:6px">
+          <li><strong>Electrostatic</strong> — between charged objects in an electric field (e.g. proton–electron attraction)</li>
+          <li><strong>Magnetic</strong> — between poles in a magnetic field</li>
+          <li><strong>Gravitational</strong> — between any two masses, acts at a distance</li>
+        </ul>
+      </div>
+    </div>
+
+    <div id="physics-friction" class="subpanel">
+      <div class="card">
+        <h3>Friction</h3>
+        <p>Opposes motion, slows objects down, and generates heat when excessive. Caused at the molecular level by surface irregularities pushing against each other.</p>
+        <h4>Factors affecting friction</h4>
+        <ul style="margin-top:4px">
+          <li>Rougher surfaces → more friction</li>
+          <li>More weight or pressure → more friction</li>
+          <li>More mass → more friction</li>
+        </ul>
+      </div>
+      <div class="grid2">
+        <div class="mini">
+          <span class="tag t-blue">Static</span>
+          <p style="margin-top:8px;font-size:0.85rem">Acts when object is at rest. Prevents motion starting. Motion only begins when applied force exceeds static friction.</p>
+        </div>
+        <div class="mini">
+          <span class="tag t-teal">Sliding</span>
+          <p style="margin-top:8px;font-size:0.85rem">Acts when surfaces slide over each other. Surface bonds break and reform. Opposes but cannot stop motion.</p>
+        </div>
+        <div class="mini">
+          <span class="tag t-amber">Rolling</span>
+          <p style="margin-top:8px;font-size:0.85rem">Contact point keeps changing — much less friction than sliding. Example: adding wheels to suitcases.</p>
+        </div>
+        <div class="mini">
+          <span class="tag t-purple">Drag</span>
+          <p style="margin-top:8px;font-size:0.85rem">Friction in fluids. Air resistance is a subtype — particles collide with the object, slowing it and causing heating.</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="physics-gravity" class="subpanel">
+      <div class="card card-teal">
+        <h3>Gravity</h3>
+        <p>An attractive force between any two objects with mass. Works in a vacuum. Keeps us on Earth's surface.</p>
+        <h4>Newton's law of universal gravitation</h4>
+        <div class="formula">Fg = (G × m₁ × m₂) / d²</div>
+        <ul style="margin-top:10px">
+          <li>Fg = gravitational force (N)</li>
+          <li>G = gravitational constant (6.674 × 10⁻¹¹)</li>
+          <li>d = distance (m) &nbsp;·&nbsp; m = mass (kg)</li>
+        </ul>
+        <div class="note" style="margin-top:14px">Always convert units before substituting into this formula.</div>
+        <h4>Weight</h4>
+        <div class="formula">W = m × g</div>
+        <p style="margin-top:8px">Weight is the force of gravity, measured in Newtons using a spring balance. Varies by location — Earth g = 9.8 m/s², Moon g ≈ 1.6 m/s².</p>
+        <div class="note" style="margin-top:10px;background:var(--amber-bg);border-color:var(--amber-border);color:var(--amber)">G (gravitational constant 6.674 × 10⁻¹¹) ≠ g (acceleration due to gravity, 9.8 m/s² on Earth).</div>
+      </div>
+    </div>
+
+    <div id="physics-balanced" class="subpanel">
+      <div class="card card-purple">
+        <h3>Balanced and unbalanced forces</h3>
+        <p style="margin-bottom:14px"><strong>Resultant / net force</strong> — a single force describing the combined action of all forces on a body. Determines direction and magnitude of motion.</p>
+        <div class="grid2">
+          <div class="mini">
+            <span class="tag t-teal">Balanced</span>
+            <p style="margin-top:8px;font-size:0.85rem">Forces cancel out completely. Resultant force = 0. Object is in equilibrium — stays still or moves at constant velocity.</p>
+          </div>
+          <div class="mini">
+            <span class="tag t-red">Unbalanced</span>
+            <p style="margin-top:8px;font-size:0.85rem">Forces do not cancel. Non-zero resultant force. Object accelerates — Newton's 2nd law: F = ma.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="physics-freefall" class="subpanel">
+      <div class="card card-blue">
+        <h3>Free fall</h3>
+        <div class="formula">g = 9.8 m/s²</div>
+        <p style="margin-top:10px">All objects accelerate toward Earth at 9.8 m/s². Without air resistance, any two objects dropped simultaneously hit the ground at the same time regardless of mass — Galileo demonstrated this at the Leaning Tower of Pisa.</p>
+        <p style="margin-top:8px">The atmosphere creates an upward drag force. Larger surface area → more drag → slower fall. Terminal velocity is reached when drag equals gravitational force — the object falls at constant speed. Skydivers use spread-eagle position to increase drag and lower terminal velocity.</p>
+      </div>
+    </div>
+
+    <div id="physics-magnets" class="subpanel">
+      <div class="card">
+        <h3>Properties of magnets</h3>
+        <ul>
+          <li>Have magnetic fields around them</li>
+          <li>Two poles — like poles repel, opposite poles attract</li>
+          <li>Exert little force on non-magnetic materials</li>
+          <li>Can induce magnetism in magnetic materials</li>
+        </ul>
+        <h4>Magnetic vs non-magnetic metals</h4>
+        <p><span class="tag t-teal">Magnetic</span> Iron · Nickel · Cobalt</p>
+        <p style="margin-top:6px"><span class="tag t-red">Non-magnetic</span> Copper · Tin · Zinc · Aluminium · Brass</p>
+        <div class="divider"></div>
+        <p style="font-size:0.85rem">In an unmagnetized material, atomic magnets point randomly. When magnetized, they align in one direction and act as one large magnet. Demagnetization: strike hard or heat to high temperature.</p>
+      </div>
+      <div class="grid2">
+        <div class="mini">
+          <span class="tag t-blue">Hard ferromagnets</span>
+          <p style="margin-top:8px;font-size:0.85rem">Permanent. Difficult to magnetize but retain magnetism. Used in microphones, compasses, fridge seals.</p>
+        </div>
+        <div class="mini">
+          <span class="tag t-teal">Soft ferromagnets</span>
+          <p style="margin-top:8px;font-size:0.85rem">Temporary. Easy to magnetize but lose magnetism quickly. Used in electromagnets and transformers.</p>
+        </div>
+      </div>
+      <div class="card" style="margin-top:12px">
+        <h3>Magnetic fields</h3>
+        <p>Field lines run from south to north pole. Strongest where lines are closest. Unlike poles facing each other combine into a uniform field. Like poles create a neutral point where field strength = 0.</p>
+        <div class="note" style="margin-top:10px">To magnetize a steel bar: place in a solenoid coil, pass large current. More current or more turns = stronger magnet.</div>
+      </div>
+    </div>
+
+    <div id="physics-em" class="subpanel">
+      <div class="card card-purple">
+        <h3>Electromagnets</h3>
+        <p>A magnet whose field is produced by electric current. Can be switched on and off. A <strong>solenoid</strong> is a long coil of wire — current through it produces a much stronger field than a straight wire.</p>
+        <h4>Increasing field strength</h4>
+        <ul style="margin-top:4px">
+          <li>Increase the current</li>
+          <li>Increase the number of turns in the coil</li>
+          <li>Use a soft iron core</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Uses</h3>
+        <h4>Scrapyard crane</h4>
+        <p style="font-size:0.85rem">Current on → core magnetizes → picks up scrap. Current off → core demagnetizes → releases scrap instantly.</p>
+        <h4>Electric bell</h4>
+        <p style="font-size:0.85rem">Push switch closes circuit → coil becomes electromagnet → attracts armature → hammer hits gong → contact switch breaks → electromagnet off → spring pulls armature back → cycle repeats.</p>
+        <h4>Relay</h4>
+        <p style="font-size:0.85rem">Uses low-current circuit to control a high-current circuit via an electromagnet. Found in car starter motors — safe because you never directly switch the high-current side.</p>
+        <h4>DC motor</h4>
+        <p style="font-size:0.85rem">Converts electrical energy into rotational mechanical energy. A commutator reverses current every half-turn to maintain continuous rotation in one direction.</p>
+      </div>
+    </div>
+
+    <div id="physics-nuclear" class="subpanel">
+      <div class="card">
+        <h3>The nucleus and nuclear forces</h3>
+        <p>Located at the center of the atom. Contains protons (+) and neutrons (neutral). <strong>Nucleons</strong> = collective term for protons and neutrons. Nuclear forces hold nucleons together — short range, essentially zero beyond 10⁻¹² cm.</p>
+      </div>
+      <div class="grid2">
+        <div class="card card-red">
+          <span class="tag t-red">Fission</span>
+          <h4 style="margin-top:10px">Nuclear fission</h4>
+          <p style="font-size:0.85rem">Heavy unstable nucleus splits into two lighter nuclei, releasing energy + neutrons. Neutrons hit other nuclei → chain reaction. Used in nuclear power plants. Uranium-235 is the most common fuel (~200 MeV per event).</p>
+        </div>
+        <div class="card card-blue">
+          <span class="tag t-blue">Fusion</span>
+          <h4 style="margin-top:10px">Nuclear fusion</h4>
+          <p style="font-size:0.85rem">Two light nuclei combine into one heavier nucleus, releasing even more energy. Requires temperatures above 100 million °C. Occurs in stars. Produces 3–4× more energy per unit mass than fission. E = mc².</p>
+        </div>
+      </div>
+      <div class="card card-amber" style="margin-top:12px">
+        <h3>Chernobyl (1986)</h3>
+        <p style="font-size:0.85rem">Nuclear plants use controlled fission: uranium splits → heat → steam → turbines → electricity.</p>
+        <h4>Control methods</h4>
+        <ul style="margin-top:4px;font-size:0.85rem">
+          <li><strong>Control rods</strong> — absorb neutrons. More rods = slower reaction, fewer = faster.</li>
+          <li><strong>Coolant</strong> — water absorbs heat, prevents overheating</li>
+          <li><strong>Containment structure</strong> — thick concrete and steel prevents radiation leakage</li>
+        </ul>
+        <h4>Causes</h4>
+        <ul style="font-size:0.85rem;margin-top:4px">
+          <li>Design flaw: no proper containment structure</li>
+          <li>Human error: control rods mishandled and removed</li>
+        </ul>
+        <h4>Effects</h4>
+        <ul style="font-size:0.85rem;margin-top:4px">
+          <li>2 deaths from explosion · 29 from acute radiation syndrome</li>
+          <li>Thousands of thyroid cancer cases in children, even decades later, from radioactive iodine</li>
+        </ul>
+      </div>
+    </div>
+
+    <div id="physics-satellites" class="subpanel">
+      <div class="card card-teal">
+        <h3>Satellites</h3>
+        <div class="grid2" style="margin:12px 0">
+          <div class="mini">
+            <span class="tag t-blue">Artificial</span>
+            <p style="margin-top:8px;font-size:0.85rem">Man-made. Powered by solar cells. Communicate via radio waves and antennas.</p>
+          </div>
+          <div class="mini">
+            <span class="tag t-teal">Natural</span>
+            <p style="margin-top:8px;font-size:0.85rem">Celestial bodies like moons. Held in orbit by gravity. Formed from post-planetary debris over millions of years.</p>
+          </div>
+        </div>
+        <h4>Applications of artificial satellites</h4>
+        <ul style="margin-top:4px;font-size:0.85rem">
+          <li><strong>Communication</strong> — TV, telephone, internet relay</li>
+          <li><strong>Remote sensing</strong> — weather monitoring, storm tracking, military surveillance</li>
+          <li><strong>Navigation</strong> — GPS positioning data</li>
+          <li><strong>Astronomy</strong> — space telescopes like Hubble, free from atmospheric interference</li>
+        </ul>
+      </div>
+    </div>
+
+    <div id="physics-bigbang" class="subpanel">
+      <div class="card card-purple">
+        <h3>The big bang theory</h3>
+        <p>All matter and energy began compressed into a <strong>singularity</strong> — a single, extremely hot and dense point. It exploded approximately 13.8 billion years ago, producing the universe.</p>
+        <h4>Evidence</h4>
+        <ul style="margin-top:4px">
+          <li><strong>Cosmic microwave background (CMB)</strong> — faint radiation detected throughout all of space. The afterglow of the Big Bang, confirming the universe was once very hot and has been cooling ever since.</li>
+          <li><strong>Red shift</strong> — light from distant galaxies always shifts toward the red (long-wavelength) end of the spectrum because galaxies are constantly moving apart.</li>
+        </ul>
+        <h4>Hubble's law</h4>
+        <p style="font-size:0.85rem">Galaxies move apart from each other, and their recessional velocity is proportional to their distance. The further a galaxy is, the faster it recedes.</p>
+        <div class="note" style="margin-top:12px">Universe estimated at 13.8 billion years old based on expansion rate and cosmic background radiation.</div>
+      </div>
+    </div>
+
+    <div id="physics-electrostatic" class="subpanel">
+      <div class="card card-blue">
+        <h3>Electrostatic force</h3>
+        <p>The force between any two charged particles. Charge is measured in <strong>coulombs (C)</strong>.</p>
+        <ul style="margin:10px 0">
+          <li>Unlike charges → attract</li>
+          <li>Like charges → repel</li>
+        </ul>
+        <h4>Real-life example — Van de Graaff generator</h4>
+        <p style="font-size:0.85rem">Charge passes from the dome to a person's hair. All hairs become negatively charged. Like charges repel — the repulsion force is strong enough to make hair stand up. An electric field then surrounds both the dome and the person.</p>
+        <div class="note" style="margin-top:10px">Electrostatic force follows an inverse-square law — it weakens as distance increases, just like gravity.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== CHEMISTRY ===================== -->
+  <div id="chemistry" class="panel">
+    <div class="pill-row">
+      <button class="pill active" onclick="switchSub('chemistry','carbon',this)">Carbon</button>
+      <button class="pill" onclick="switchSub('chemistry','compounds',this)">Organic vs inorganic</button>
+      <button class="pill" onclick="switchSub('chemistry','eutro',this)">Eutrophication</button>
+    </div>
+
+    <div id="chemistry-carbon" class="subpanel active">
+      <div class="card card-teal">
+        <h3>Carbon</h3>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0">
+          <span class="tag t-teal">Group 14 · Period 2</span>
+          <span class="tag t-blue">Atomic number 6</span>
+          <span class="tag t-purple">Valency = 4</span>
+        </div>
+        <p>Carbon shares 4 electrons to reach stability, forming covalent bonds. It does not form ionic bonds — losing 4 electrons requires too much energy, gaining 4 makes it unstable.</p>
+        <p style="margin-top:8px">In free state, carbon exists only as: <strong>Diamond</strong>, <strong>Graphite</strong>, or <strong>Fullerene</strong>.</p>
+      </div>
+      <div class="grid2">
+        <div class="mini">
+          <span class="tag t-purple">Catenation</span>
+          <p style="margin-top:8px;font-size:0.85rem">Bonds with other carbon atoms to form long chains or rings. Examples: methane, ethane, benzene.</p>
+        </div>
+        <div class="mini">
+          <span class="tag t-teal">Multiple bonding</span>
+          <p style="margin-top:8px;font-size:0.85rem">Forms single, double, and triple bonds. Ethane (single), Ethene (double), Ethyne (triple).</p>
+        </div>
+        <div class="mini">
+          <span class="tag t-blue">Tetravalency</span>
+          <p style="margin-top:8px;font-size:0.85rem">Can form four covalent bonds with other atoms, allowing enormous structural variety.</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="chemistry-compounds" class="subpanel">
+      <div class="card">
+        <h3>Organic vs inorganic compounds</h3>
+        <p><strong>Organic</strong> — primarily made of carbon-hydrogen bonds. Examples: alcohol, methane, glucose.</p>
+        <p style="margin-top:6px"><strong>Inorganic</strong> — do not contain carbon-hydrogen bonds. Examples: water, carbon dioxide.</p>
+        <table style="margin-top:16px">
+          <tr><th>Aspect</th><th>Organic</th><th>Inorganic</th></tr>
+          <tr><td>Bonding</td><td>Typically covalent</td><td>Ionic or covalent</td></tr>
+          <tr><td>Melting &amp; boiling points</td><td>Lower</td><td>Higher</td></tr>
+          <tr><td>Solubility in water</td><td>Usually insoluble</td><td>Usually soluble</td></tr>
+          <tr><td>Conductivity</td><td>Poor conductors</td><td>Good conductors</td></tr>
+          <tr><td>Combustibility</td><td>Mostly combustible</td><td>Mostly non-combustible</td></tr>
+          <tr><td>Uses</td><td>Fuels, plastics, medicine, food</td><td>Salts, metals, construction</td></tr>
+        </table>
+      </div>
+      <div class="grid2">
+        <div class="card card-green">
+          <h3>Organic applications</h3>
+          <ul style="font-size:0.85rem">
+            <li>Pharmaceuticals — medicines, antibiotics, vaccines</li>
+            <li>Plastics — packaging</li>
+            <li>Fuels — gasoline and diesel</li>
+            <li>Agriculture — pesticides, fertilizers, herbicides</li>
+          </ul>
+          <h4>Environmental impact</h4>
+          <ul style="font-size:0.85rem">
+            <li>Plastic pollution — non-biodegradable plastics cause land and marine pollution</li>
+            <li>Pharmaceuticals contaminate water bodies</li>
+          </ul>
+        </div>
+        <div class="card card-blue">
+          <h3>Inorganic applications</h3>
+          <ul style="font-size:0.85rem">
+            <li>Construction — cement, glass, metals</li>
+            <li>Health — minerals like iron and calcium</li>
+            <li>Electronics — metal oxides in batteries</li>
+          </ul>
+          <h4>Environmental impact</h4>
+          <ul style="font-size:0.85rem">
+            <li>Mining causes deforestation and habitat loss</li>
+            <li>Industrial waste (lead, mercury, arsenic) harms ecosystems</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div id="chemistry-eutro" class="subpanel">
+      <div class="card card-teal">
+        <h3>Eutrophication</h3>
+        <p>Enrichment of water bodies with inorganic nutrients, mainly nitrate (NO₃⁻) and phosphate (PO₄³⁻), from fertilizers, sewage, and industrial discharge.</p>
+        <h4>Process</h4>
+        <ol style="margin-top:6px;font-size:0.85rem;padding-left:18px">
+          <li>Excess nutrients enter water through runoff</li>
+          <li>Nutrients stimulate rapid algal growth (algal bloom)</li>
+          <li>Large amounts of organic biomass accumulate</li>
+          <li>Microorganisms decompose biomass, consuming dissolved oxygen</li>
+          <li>Hypoxic conditions form → fish deaths → dead zones</li>
+        </ol>
+        <h4>Case study: Lake Erie</h4>
+        <p style="font-size:0.85rem">Excessive phosphorus and nitrogen since the mid-20th century have accelerated eutrophication, threatening drinking water, fisheries, and ecosystem stability. Climate warming intensifies the process by increasing algal growth rates.</p>
+      </div>
+      <div class="card card-amber">
+        <h3>Controlling agricultural fertilizer use</h3>
+        <h4>Advantage</h4>
+        <p style="font-size:0.85rem">Reduces nitrogen and phosphorus entering the lake. Decreases algal blooms, improves water quality, restores aquatic ecosystems, reduces dead zones. Targets the problem at its source.</p>
+        <h4>Limitation</h4>
+        <p style="font-size:0.85rem">Difficult to monitor across many farms. Farmers depend on fertilizers for yield — strict regulations affect income. Nutrients already in soil and sediments continue entering the lake for years, so improvements are not immediate.</p>
+        <h4>Conclusion</h4>
+        <p style="font-size:0.85rem">Effective as a long-term solution but must be combined with farmer education, sustainable farming practices, and monitoring programs.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== BIOLOGY ===================== -->
+  <div id="biology" class="panel">
+    <div class="pill-row">
+      <button class="pill active" onclick="switchSub('biology','germ',this)">Seed germination</button>
+      <button class="pill" onclick="switchSub('biology','resp',this)">Respiratory system</button>
+      <button class="pill" onclick="switchSub('biology','ferm',this)">Respiration & fermentation</button>
+      <button class="pill" onclick="switchSub('biology','class',this)">Classification</button>
+      <button class="pill" onclick="switchSub('biology','air',this)">Indoor air pollution</button>
+    </div>
+
+    <div id="biology-germ" class="subpanel active">
+      <div class="card card-green">
+        <h3>Seed germination</h3>
+        <p>The process by which a seed grows into a young plant (seedling).</p>
+        <h4>Stages</h4>
+        <ol style="margin-top:6px;font-size:0.85rem;padding-left:18px">
+          <li><strong>Imbibition</strong> — seed rapidly absorbs water, coat swells and softens</li>
+          <li><strong>Lag phase</strong> — enzymes activate, respiration begins, proteins produced, stored food metabolized</li>
+          <li><strong>Emergence</strong> — coat ruptures, radicle forms roots, plumule emerges, shoot grows upward</li>
+        </ol>
+      </div>
+      <div class="grid2">
+        <div class="mini">
+          <span class="tag t-blue">Water</span>
+          <ul style="margin-top:8px;font-size:0.85rem">
+            <li>Softens seed coat during imbibition</li>
+            <li>Provides dissolved oxygen to embryo</li>
+          </ul>
+        </div>
+        <div class="mini">
+          <span class="tag t-teal">Oxygen</span>
+          <ul style="margin-top:8px;font-size:0.85rem">
+            <li>Required for metabolism and respiration until leaves develop</li>
+            <li>Found in pores of soil particles</li>
+          </ul>
+        </div>
+        <div class="mini">
+          <span class="tag t-amber">Temperature</span>
+          <p style="margin-top:8px;font-size:0.85rem">Optimal range: 25–30°C for most seeds.</p>
+        </div>
+        <div class="mini">
+          <span class="tag t-purple">Sunlight</span>
+          <p style="margin-top:8px;font-size:0.85rem">Most seeds require sunlight. Some specialized seeds germinate only in darkness.</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="biology-resp" class="subpanel">
+      <div class="card card-blue">
+        <h3>Pathway of air</h3>
+        <table>
+          <tr><th>#</th><th>Organ</th><th>Function</th></tr>
+          <tr><td>1</td><td>Nose</td><td>Warms, moistens, and filters incoming air</td></tr>
+          <tr><td>2</td><td>Pharynx</td><td>Shared passage for air and food</td></tr>
+          <tr><td>3</td><td>Larynx</td><td>Epiglottis prevents food entering windpipe; enables speech</td></tr>
+          <tr><td>4</td><td>Trachea</td><td>Carries air; C-shaped cartilage rings keep it open</td></tr>
+          <tr><td>5</td><td>Bronchi</td><td>Trachea splits into two airways, one per lung</td></tr>
+          <tr><td>6</td><td>Bronchioles</td><td>Smaller airways delivering air to alveoli</td></tr>
+          <tr><td>7</td><td>Alveoli</td><td>Tiny air sacs — O₂ enters blood, CO₂ leaves</td></tr>
+          <tr><td>8</td><td>Diaphragm</td><td>Contracts and relaxes to expand/deflate lungs</td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <h3>Gas exchange in alveoli</h3>
+        <p>Occurs by diffusion along concentration gradients. O₂ diffuses from alveoli into blood. CO₂ diffuses from blood into alveoli to be exhaled.</p>
+        <h4>Role of cartilage</h4>
+        <ul style="font-size:0.85rem;margin-top:4px">
+          <li><strong>Structural support</strong> — C-shaped rings prevent trachea and bronchi collapsing</li>
+          <li><strong>Protection</strong> — flexible but strong, handles pressure changes during coughing without damage</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Diseases</h3>
+        <div class="grid2">
+          <div class="mini"><span class="tag t-red">Asthma</span><p style="font-size:0.85rem;margin-top:6px">Inflammation and narrowing of airways → difficulty breathing.</p></div>
+          <div class="mini"><span class="tag t-amber">Bronchitis</span><p style="font-size:0.85rem;margin-top:6px">Inflamed bronchi from infection or smoking. Excess mucus, narrowed airways.</p></div>
+          <div class="mini"><span class="tag t-red">Pneumonia</span><p style="font-size:0.85rem;margin-top:6px">Lung infection → fluid in alveoli → impaired gas exchange.</p></div>
+          <div class="mini"><span class="tag t-purple">Emphysema</span><p style="font-size:0.85rem;margin-top:6px">Alveoli damage reduces gas exchange efficiency. Common in smokers.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="biology-ferm" class="subpanel">
+      <div class="card">
+        <h3>Respiration</h3>
+        <p>A series of chemical reactions releasing energy inside every living cell.</p>
+        <div class="grid2" style="margin-top:12px">
+          <div class="mini">
+            <span class="tag t-teal">Aerobic</span>
+            <p style="margin-top:8px;font-size:0.85rem">In mitochondria. Requires oxygen. Produces CO₂, water, and large amounts of ATP. Slow but sustained.</p>
+            <div class="formula" style="margin-top:8px;font-size:0.78rem">C₆H₁₂O₆ + 6O₂ → 6CO₂ + 6H₂O + ATP</div>
+          </div>
+          <div class="mini">
+            <span class="tag t-amber">Anaerobic</span>
+            <p style="margin-top:8px;font-size:0.85rem">In cytoplasm. No oxygen needed. Small amounts of ATP. Fast but cannot be sustained.</p>
+            <p style="margin-top:6px;font-size:0.8rem">Animals → lactic acid + energy</p>
+            <p style="font-size:0.8rem">Yeast/plants → ethanol + CO₂ + energy</p>
+          </div>
+        </div>
+      </div>
+      <div class="card card-purple">
+        <h3>Fermentation</h3>
+        <p>A type of anaerobic respiration — microorganisms break down sugars without oxygen.</p>
+        <div class="grid2" style="margin-top:12px">
+          <div class="mini">
+            <span class="tag t-blue">Alcoholic</span>
+            <p style="font-size:0.85rem;margin-top:8px">Yeast and some bacteria. Glucose → ethanol + CO₂ + energy. Used in brewing, baking, winemaking. CO₂ causes bread to rise.</p>
+            <div class="formula" style="margin-top:8px;font-size:0.75rem">C₆H₁₂O₆ → 2C₂H₅OH + 2CO₂</div>
+          </div>
+          <div class="mini">
+            <span class="tag t-purple">Lactic acid</span>
+            <p style="font-size:0.85rem;margin-top:8px">Bacteria and human muscle cells. Glucose → lactic acid + energy. Used in yogurt and cheese. Causes muscle fatigue during intense exercise.</p>
+            <div class="formula" style="margin-top:8px;font-size:0.75rem">C₆H₁₂O₆ → 2C₃H₆O₃</div>
+          </div>
+        </div>
+        <h4 style="margin-top:16px">Uses of fermentation</h4>
+        <p style="font-size:0.85rem">Food industry (bread, yogurt, cheese) · Alcohol · Biofuels · Pharmaceuticals</p>
+      </div>
+    </div>
+
+    <div id="biology-class" class="subpanel">
+      <div class="card card-green">
+        <h3>Classification of living organisms</h3>
+        <p>Accurately names organisms, prevents misnomers, uses a shared Latinized language, and reveals interrelationships.</p>
+        <h4>Taxonomy hierarchy</h4>
+        <p style="font-size:0.85rem">Kingdom → Phylum → Class → Order → Family → Genus → Species</p>
+        <h4>Binomial nomenclature</h4>
+        <p style="font-size:0.85rem">Two words: Genus (capital) + species (lowercase). Both italicized or underlined. Both Latinized. Example: <em>Homo sapiens</em>, <em>Pisum sativum</em>.</p>
+      </div>
+      <div class="card">
+        <h3>Mode of nutrition</h3>
+        <table>
+          <tr><th>Mode</th><th>Definition</th><th>Examples</th></tr>
+          <tr><td>Autotrophic</td><td>Synthesize their own food</td><td>Plants, algae, cyanobacteria</td></tr>
+          <tr><td>Heterotrophic</td><td>Depend on other organisms</td><td>Animals, fungi</td></tr>
+          <tr><td>Saprophytic</td><td>Feed on dead/decaying matter</td><td>Fungi</td></tr>
+          <tr><td>Parasitic</td><td>Live on/inside a host</td><td>Tapeworm, Plasmodium</td></tr>
+          <tr><td>Holozoic</td><td>Ingest, digest, and absorb solid food</td><td>Humans, dogs, amoeba</td></tr>
+          <tr><td>Symbiotic</td><td>Two organisms mutually benefiting</td><td>Rhizobium + legumes</td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <h3>Prokaryotes vs eukaryotes</h3>
+        <table>
+          <tr><th>Feature</th><th>Eukaryotes</th><th>Prokaryotes</th></tr>
+          <tr><td>Nucleus</td><td>Present</td><td>Absent</td></tr>
+          <tr><td>Size</td><td>Large</td><td>Small</td></tr>
+          <tr><td>Cell occurrence</td><td>Uni- or multicellular</td><td>Unicellular</td></tr>
+          <tr><td>Organelles</td><td>Membrane-bound</td><td>None</td></tr>
+          <tr><td>Division</td><td>Mitosis or meiosis</td><td>Binary fission</td></tr>
+          <tr><td>Examples</td><td>Plants, animals, fungi</td><td>Bacteria</td></tr>
+        </table>
+      </div>
+      <div class="card card-teal">
+        <h3>R.H. Whittaker's 5 kingdoms</h3>
+        <div class="grid2">
+          <div class="mini"><span class="tag t-purple">Monera</span><p style="font-size:0.82rem;margin-top:6px">Prokaryotic, unicellular, auto- or heterotrophic. Example: Bacteria.</p></div>
+          <div class="mini"><span class="tag t-blue">Protista</span><p style="font-size:0.82rem;margin-top:6px">Eukaryotic, unicellular, auto- or heterotrophic. Example: Amoeba.</p></div>
+          <div class="mini"><span class="tag t-amber">Fungi</span><p style="font-size:0.82rem;margin-top:6px">Eukaryotic, saprophytic, have cell walls. Some symbiotic with algae. Example: Mushroom.</p></div>
+          <div class="mini"><span class="tag t-green">Plantae</span><p style="font-size:0.82rem;margin-top:6px">Eukaryotic, multicellular, autotrophic, have cell walls. Example: Rose.</p></div>
+          <div class="mini"><span class="tag t-teal">Animalia</span><p style="font-size:0.82rem;margin-top:6px">Eukaryotic, multicellular, heterotrophic, no cell wall. Example: Humans.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="biology-air" class="subpanel">
+      <div class="card card-red">
+        <h3>Indoor air pollution</h3>
+        <p>Arises from various indoor sources. Significantly impacts health, especially in vulnerable populations.</p>
+        <h4>Sources</h4>
+        <ul style="font-size:0.85rem;margin-top:4px">
+          <li>Household fuels and cooking</li>
+          <li>Biological contaminants — mould, dust mites, pet dander</li>
+          <li>Combustion appliances — furnaces and gas stoves emit CO and NO₂</li>
+          <li>Household cleaners and personal care products</li>
+        </ul>
+        <h4>Health impacts</h4>
+        <ul style="font-size:0.85rem;margin-top:4px">
+          <li>Respiratory diseases — asthma, COPD</li>
+          <li>Cardiovascular problems — heart attack and stroke</li>
+          <li>Cognitive deficits and developmental issues in young children</li>
+          <li>Increased cancer risk</li>
+        </ul>
+        <h4>Vulnerable populations</h4>
+        <p style="font-size:0.85rem">Children and infants · Senior citizens · Low-income households with poor ventilation · People with pre-existing conditions</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function switchTab(id, btn) {
+  document.querySelectorAll('.stab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(id).classList.add('active');
+}
+function switchSub(prefix, id, btn) {
+  const panel = document.getElementById(prefix);
+  panel.querySelectorAll('.pill').forEach(t => t.classList.remove('active'));
+  panel.querySelectorAll('.subpanel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(prefix + '-' + id).classList.add('active');
+}
+</script>
+</body>
+</html>
